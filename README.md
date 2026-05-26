@@ -1,102 +1,145 @@
-# 🎯 Face Recognition Camera System
+# Face Recognition Camera System v3.0
 
-Real-time camera app that detects faces and displays **Name + ID** as a HUD overlay.
+## Overview
+This is an enhanced face recognition system with improved camera quality, face detection accuracy, and user experience. The system now features HD resolution, better image processing, stabilized face detection, modern HUD overlay, and face snapshot capabilities.
 
----
+## Features
 
-## 📦 Install Dependencies
+### Camera Quality Improvements
+- Increased camera resolution to Full HD (1920x1080)
+- Improved brightness, contrast, and sharpness settings
+- Auto-focus support (if camera supports it)
+- Better FPS for smoother video stream
+- CLAHE and histogram equalization for enhanced contrast in poor lighting
+
+### Face Detection Improvements
+- Multi-scale face detection for better accuracy at various distances
+- Face bounding box stabilization to reduce shaking/flickering
+- Improved detection in low light conditions
+- Non-maximum suppression to eliminate duplicate detections
+- Better face quality scoring (blur, brightness, contrast)
+
+### HUD Overlay Improvements
+- Modern, futuristic HUD design
+- Displays User Name, User ID, and Confidence %
+- Color-coded boxes: Green for verified users, Red for unknown users
+- Text shadow/background for better readability
+- Animated face box corners
+- Status text: "Face Detected" / "No Face Found"
+- Loading animation at startup
+- Fullscreen mode support
+- Responsive design for different screen sizes
+
+### Face Snapshot Feature
+- Button to capture detected face image ('C' key)
+- Automatic saving with timestamp
+- Filename format: `userID_YYYY-MM-DD_HH-MM-SS.jpg`
+- Saves both full frame and individual face crops
+
+### User Experience Improvements
+- Loading animation when camera starts
+- Clear status indicators
+- Improved keyboard controls
+- Better error handling
+- Organized code structure with separate modules
+
+### Performance Optimizations
+- Reduced CPU and memory usage
+- Async processing considerations
+- Optimized camera rendering pipeline
+- Prevents UI freezing during detection
+
+## Modules
+
+1. `camera.py` - Handles video capture with improved settings
+2. `face_detector.py` - Improved face detection with multi-scale and stabilization
+3. `hud.py` - Heads-Up Display module for overlay (unchanged from v2)
+4. `config.py` - Configuration constants and settings
+5. `face_camera.py` - Main application logic (enhanced v3.0)
+
+## Installation
 
 ```bash
-pip install opencv-python opencv-contrib-python mediapipe numpy
+pip install opencv-contrib-python pyttsx3 numpy
 ```
 
----
+## Usage
 
-## 🚀 Quick Start
-
-### Step 1 — Register people
-
-```bash
-python face_camera.py --register
-```
-
-- Enter the person's **full name** and **ID / badge number**
-- Look at the camera — it captures **40 face samples** automatically
-- Repeat for every person you want recognised
-
-### Step 2 — Run the live camera
-
+### Live Recognition
 ```bash
 python face_camera.py
 ```
 
-- Camera opens, faces are detected in real-time
-- **Green box** = recognised person → shows Name + ID
-- **Red box**   = unknown face
-- Press **Q** to quit
-
----
-
-## 📋 Other Commands
-
-| Command | Action |
-|---------|--------|
-| `python face_camera.py` | Start live recognition |
-| `python face_camera.py --register` | Register a new person |
-| `python face_camera.py --list` | Show all registered people |
-| `python face_camera.py --retrain` | Re-train model after manual changes |
-
----
-
-## 📁 File Structure
-
-```
-face_recognition_system/
-├── face_camera.py      ← main program
-├── requirements.txt    ← dependencies
-├── people_db.json      ← auto-created: name/ID database
-├── face_model.xml      ← auto-created: trained model
-└── known_faces/
-    ├── 0/              ← face images for person 0
-    ├── 1/              ← face images for person 1
-    └── ...
+### Register New Person
+```bash
+python face_camera.py --register
 ```
 
----
-
-## 🖥️ HUD Display Explained
-
-```
-┌─────────────────────────────────────────┐
-│ FACE RECOGNITION  [LIVE]        12:34:56│
-├─────────────────────────────────────────┤
-│                                         │
-│   ┌──────────┐   ← corner bracket box  │
-│   │  (face)  │      GREEN = known       │
-│   └──────────┘      RED   = unknown     │
-│  ┌────────────────┐                     │
-│  │ John Smith     │  ← Name             │
-│  │ ID: EMP-1042   │  ← ID              │
-│  └────────────────┘                     │
-│                                         │
-├─────────────────────────────────────────┤
-│ Faces: 1 | FPS: 28.4 | DB: 3 people    │
-└─────────────────────────────────────────┘
+### Retrain Model
+```bash
+python face_camera.py --retrain
 ```
 
----
+### List Registered People
+```bash
+python face_camera.py --list
+```
 
-## ⚙️ How It Works
+### Delete Person
+```bash
+python face_camera.py --delete ID
+```
 
-1. **Detection** — MediaPipe FaceDetection finds all faces in the frame
-2. **Recognition** — OpenCV LBPH (Local Binary Pattern Histogram) compares face to trained model
-3. **Overlay** — Name + ID drawn as a semi-transparent card beneath each face box
+### Export Log to CSV
+```bash
+python face_camera.py --export
+```
 
----
+## Keyboard Controls (Live Recognition)
 
-## 💡 Tips
+- **S** - Save screenshot
+- **F** - Freeze/unfreeze frame
+- **M** - Toggle mirror mode
+- **Z** - Zoom in
+- **X** - Zoom out
+- **+** - Loosen confidence threshold
+- **-** - Tighten confidence threshold
+- **C** - Capture face snapshot
+- **Q** - Quit application
 
-- Register in **good lighting** for best accuracy
-- Register from **multiple angles** (run `--register` 2–3 times per person)
-- Confidence score shown top-right of box (higher = more confident)
-- Threshold is set at **80** — adjust `known = confidence < 80` in code to tune sensitivity
+## Configuration
+
+Adjust settings in `config.py`:
+- Camera resolution (CAMERA_WIDTH, CAMERA_HEIGHT)
+- FPS target (CAMERA_FPS)
+- Image enhancement settings (BRIGHTNESS, CONTRAST, etc.)
+- Face detection parameters
+- HUD colors and dimensions
+- Recognition threshold
+
+## Output Directories
+
+- `known_faces/` - Stores registered face samples
+- `screenshots/` - Stores screenshots (S key)
+- `snapshots/` - Stores face snapshots (C key)
+- `face_model.xml` - Trained recognition model
+- `people_db.json` - Database of registered people
+- `recognition_log.json` - Log of recognition events
+
+## Requirements
+
+- OpenCV (opencv-contrib-python for face recognition)
+- pyttsx3 (for text-to-speech)
+- NumPy
+- Webcam or camera device
+
+## Future Improvements
+
+Consider adding:
+- Face recognition matching with database
+- Unknown person alerts
+- Face distance estimation
+- Blink detection/liveness detection
+- Attendance logging system
+- Integration with security systems
+- Cloud synchronization
